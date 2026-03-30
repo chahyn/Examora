@@ -28,13 +28,13 @@ public class AuthController {
         return ResponseEntity.ok(authService.login(request));
     }
     @PostMapping("/register")
-    public ResponseEntity<void> registre(
+    public ResponseEntity<Void> registre(
             @Valid @RequestBody RegisterRequest request){
         authService.register(request);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
     @DeleteMapping("/logout/{id}")
-    public ResponseEntity<void> logout(@PathVariable Long id){
+    public ResponseEntity<Void> logout(@PathVariable Long id){
         authService.logout(id);
         return ResponseEntity.noContent().build();
     }
@@ -48,7 +48,7 @@ public class AuthController {
         return ResponseEntity.ok(utilisateurService.getById(id));
     }
     @PatchMapping("/{id}/actif")
-    public ResponseEntity<void> toggleActif(@PathVariable Long id){
+    public ResponseEntity<Void> toggleActif(@PathVariable Long id){
         utilisateurService.toggleActif(id);
         return ResponseEntity.noContent().build();
     }
