@@ -1,0 +1,14 @@
+package org.examora.examora.academique.repository;
+
+import org.examora.examora.academique.entities.Semestre;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface SemestreRepository extends JpaRepository<Semestre, Long> {
+    List<Semestre>findAll();
+    void DeleteById(Long id);
+    boolean existsByFiliereIdAndNom(Long filiereId, String nom);
+}
