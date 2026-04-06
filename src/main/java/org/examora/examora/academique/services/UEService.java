@@ -1,6 +1,5 @@
 package org.examora.examora.academique.services;
 
-
 import lombok.RequiredArgsConstructor;
 import org.examora.examora.academique.dto.UEDTO;
 import org.examora.examora.academique.dto.UERequest;
@@ -46,30 +45,42 @@ public class UEService {
 
     // CREATE
     public UEDTO creer(UERequest request) {
+        // 1. Check if UE already exists in that semester
         if (ueRepo.existsBySemestreIdAndNom(request.getSemestreId(), request.getNom())) {
             throw new RuntimeException("Cette UE existe déjà dans ce semestre");
         }
+
+        // 2. Validate that the semester exists
         Semestre semestre = semestreRepo.findById(request.getSemestreId())
                 .orElseThrow(() -> new RuntimeException("Semestre introuvable"));
+
+        // 3. Build the entity (Correctly assigned to variable 'ue')
         UE ue = UE.builder()
                 .nom(request.getNom())
                 .code(request.getCode())
-                .coefficient(request.getCoefficient())
                 .semestre(semestre)
                 .build();
+
+        // 4. Save and convert to DTO
         return toDTO(ueRepo.save(ue));
     }
 
     // UPDATE
     public UEDTO modifier(Long id, UERequest request) {
+        // 1. Find the existing UE
         UE ue = ueRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("UE introuvable"));
+
+        // 2. Validate the new semester exists
         Semestre semestre = semestreRepo.findById(request.getSemestreId())
                 .orElseThrow(() -> new RuntimeException("Semestre introuvable"));
+
+        // 3. Update fields
         ue.setNom(request.getNom());
         ue.setCode(request.getCode());
-        ue.setCoefficient(request.getCoefficient());
         ue.setSemestre(semestre);
+
+        // 4. Save and convert to DTO
         return toDTO(ueRepo.save(ue));
     }
 
@@ -81,16 +92,16 @@ public class UEService {
         ueRepo.deleteById(id);
     }
 
-    // TO DTO
+    // TO DTO helper method
     private UEDTO toDTO(UE ue) {
         return new UEDTO(
                 ue.getId(),
                 ue.getNom(),
                 ue.getCode(),
-                ue.getCoefficient(),
-                ue.getSemestre().getId(),
-                ue.getSemestre().getNom(),
+                ue.getSemestre() != null ? ue.getSemestre().getId() : null,
+                ue.getSemestre() != null ? ue.getSemestre().getNom() : "N/A",
                 ue.getMatieres() != null ? ue.getMatieres().size() : 0
+
         );
     }
 }

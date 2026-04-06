@@ -1,8 +1,8 @@
 package org.examora.examora.examen.service;
 
-import jakarta.annotation.Resource;
+import org.springframework.core.io.Resource;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
+import org.springframework.beans.factory.annotation.Value;
 import org.examora.examora.academique.entities.Matiere;
 import org.examora.examora.examen.entities.CoursDocument;
 import org.examora.examora.examen.repository.CoursDocumentRepository;
@@ -21,34 +21,25 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class CoursDocumentService {
-    //read the upload directory path frome BD
-    @Value("${app.upload.dir}")
+
+    @Value("/var/uploads/examflow")
     private String uploadDir;
 
     private final CoursDocumentRepository coursDocumentRepo;
 
-    //when pdf submitted this returns the coursDocument entity avec id
     public CoursDocument upload(MultipartFile fichier,
                                 Matiere matiere,
-                                Professeur professeur) throws IOException{
-
-        //validate pdf or not
+                                Professeur professeur) throws IOException {
         String contentType = fichier.getContentType();
-        if(!"application/pdf".equals(contentType)){
-            throw new IllegalArgumentException("seuls les fichiers PDF sont accepté");
+        if (!"application/pdf".equals(contentType)) {
+            throw new IllegalArgumentException("Seuls les fichiers PDF sont acceptés");
         }
-        // create a new random file name
-        // moin Conflits ( si 2 profs on le meme cours nom ou path nom)
+
         String nomStockage = UUID.randomUUID() + ".pdf";
-
-        // Paths.get(uploadDir) = /var/uploads/examflow
-        //    .resolve(nomStockage) = /var/uploads/examflow/abc123.pdf
         Path destination = Paths.get(uploadDir).resolve(nomStockage);
+        Files.createDirectories(destination.getParent());
+        Files.write(destination, fichier.getBytes());
 
-        Files.createDirectories((destination.getParent()));
-        Files.write(destination , fichier.getBytes());
-
-        //finaly build and save only the metdata
         CoursDocument doc = CoursDocument.builder()
                 .nomFichier(fichier.getOriginalFilename())
                 .cheminStockage(nomStockage)
@@ -59,23 +50,35 @@ public class CoursDocumentService {
                 .traiteParIA(false)
                 .build();
         return coursDocumentRepo.save(doc);
-
     }
- //prof must make the pdf visible
-    public CoursDocument publier (Long id , Professeur caller)
-    {
-        CoursDocument doc = coursDocumentRepo.findById(id)
-                .orElseThrow(()-> new RuntimeException(("Document introuvable")));
 
-        //securité pour que seulement le prof doit publier
-        if(!doc.getProfesseur().getId().equals(caller.getId())){
-            throw new RuntimeException("accès refusé ");
+    // ← ADDED: toggle on/off (replaces publier which only set to true)
+    public CoursDocument toggleVisibilite(Long id, Professeur caller) {
+        CoursDocument doc = coursDocumentRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Document introuvable"));
+
+        if (!doc.getProfesseur().getId().equals(caller.getId())) {
+            throw new RuntimeException("Accès refusé");
         }
+
+        doc.setVisibleEtudiants(!doc.isVisibleEtudiants()); // true→false or false→true
+        return coursDocumentRepo.save(doc);
+    }
+
+    // kept for explicit publish-only use case
+    public CoursDocument publier(Long id, Professeur caller) {
+        CoursDocument doc = coursDocumentRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Document introuvable"));
+
+        if (!doc.getProfesseur().getId().equals(caller.getId())) {
+            throw new RuntimeException("Accès refusé");
+        }
+
         doc.setVisibleEtudiants(true);
         return coursDocumentRepo.save(doc);
     }
-    public Resource telecharger(Long id) throws IOException {
 
+    public Resource telecharger(Long id) throws IOException {
         CoursDocument doc = coursDocumentRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Document introuvable"));
 
@@ -85,23 +88,20 @@ public class CoursDocumentService {
         if (!resource.exists()) {
             throw new RuntimeException("Fichier introuvable sur le serveur");
         }
-
         return resource;
     }
 
-    //prof peut voir tous documents
-    public List<CoursDocument> findByProfesseur(Long professeurId){
+    public List<CoursDocument> findByProfesseur(Long professeurId) {
         return coursDocumentRepo.findByProfesseurId(professeurId);
     }
 
-    public List<CoursDocument> findVisibleByMatiere(Long matierId){
-        return coursDocumentRepo.findByMatiereIdAndVisibleEtudiantsTrue(matierId);
+    // ← FIXED: renamed to match controller call (findVisiblesByMatiere)
+    public List<CoursDocument> findVisiblesByMatiere(Long matiereId) {
+        return coursDocumentRepo.findByMatiereIdAndVisibleEtudiantsTrue(matiereId);
     }
 
-    //get the doc before sending to claude
-    public CoursDocument findById(Long id){
+    public CoursDocument findById(Long id) {
         return coursDocumentRepo.findById(id)
-                .orElseThrow(()-> new RuntimeException("Document introuvable"));
+                .orElseThrow(() -> new RuntimeException("Document introuvable"));
     }
 }
-

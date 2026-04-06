@@ -112,7 +112,7 @@ public class ExamenService {
     }
     public List<Examen> findEnCoursForEtudiant(Long matiereId) {
         return examenRepo
-                .findByMatiereIdAndStatut(
+                .findByMatiereIdAndStatutIn(
                         matiereId,
                         List.of(StatutExamen.PLANIFIE)
                 )
@@ -121,7 +121,7 @@ public class ExamenService {
                 .collect(Collectors.toList());
     }
     public List<Examen> findAccessiblesByEtudiant(Long matiereId) {
-        return examenRepo.findByMatiereIdAndStatut(
+        return examenRepo.findByMatiereIdAndStatutIn(
                 matiereId,
                 List.of(StatutExamen.PLANIFIE, StatutExamen.TERMINE)
         );

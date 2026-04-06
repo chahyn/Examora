@@ -2,6 +2,8 @@ package org.examora.examora.examen.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.examora.examora.academique.entities.Matiere;
+import org.examora.examora.academique.repository.MatiereRepository;
 import org.examora.examora.examen.dto.CoursDocumentDto;
 import org.examora.examora.examen.dto.ExamenMapper;
 import org.examora.examora.examen.entities.CoursDocument;
@@ -12,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -21,6 +24,7 @@ public class CoursDocumentController {
     private final CoursDocumentService coursDocumentService;
     private final ExamenMapper examenMapper;
     private final AuthHelper authHelper;
+    private final MatiereRepository matiereRepo;
 
     /**
      * POST /api/documents/upload
@@ -30,10 +34,12 @@ public class CoursDocumentController {
     public ResponseEntity<CoursDocumentDto> upload(
             @RequestParam("fichier") MultipartFile fichier,
             @RequestParam Long matiereId,
-            HttpServletRequest httpRequest) {
+            HttpServletRequest httpRequest) throws IOException {
 
         Professeur professeur = authHelper.getCurrentProfesseur(httpRequest);
-        CoursDocument doc = coursDocumentService.upload(fichier, matiereId, professeur);
+        Matiere matiere = matiereRepo.findById(matiereId)
+                .orElseThrow(()-> new RuntimeException("matiere introuvable"));
+        CoursDocument doc = coursDocumentService.upload(fichier, matiere, professeur);
         return ResponseEntity.ok(examenMapper.toCoursDocumentDto(doc));
     }
 

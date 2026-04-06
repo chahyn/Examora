@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.examora.examora.utilisateur.entities.Role;
 
 @Data
 @AllArgsConstructor
@@ -27,6 +28,6 @@ public class RegisterRequest {
     private String confirmPassword;
     @NotBlank
     @NotNull
-    private String role;
+    private Role role;
 
 }

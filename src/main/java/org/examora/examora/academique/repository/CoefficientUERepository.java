@@ -8,6 +8,6 @@ import java.util.Optional;
 
 @Repository
 public interface CoefficientUERepository extends JpaRepository<CoefficientsUE , Long> {
-    Optional<CoefficientsUE> findByUeID(Long ueId);
+    Optional<CoefficientsUE> findByUeId(Long ueId);
     boolean existsByUeId(Long ueId);
 }

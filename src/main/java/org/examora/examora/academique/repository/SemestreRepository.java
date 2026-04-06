@@ -9,6 +9,5 @@ import java.util.List;
 @Repository
 public interface SemestreRepository extends JpaRepository<Semestre, Long> {
     List<Semestre>findAll();
-    void DeleteById(Long id);
     boolean existsByFiliereIdAndNom(Long filiereId, String nom);
 }

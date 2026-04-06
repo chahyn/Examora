@@ -61,7 +61,7 @@ public class AuthService {
 
         // 2. Build entity based on role
         Utilisateur newUser = switch (request.getRole()) {
-            case PROFESSEUR -> Professeur.builder()
+            case PROFESSEUR -> (Utilisateur) Professeur.builder()
                     .nom(request.getNom())
                     .prenom(request.getPrenom())
                     .email(request.getEmail())

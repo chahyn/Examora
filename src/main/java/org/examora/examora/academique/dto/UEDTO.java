@@ -13,4 +13,5 @@ public class UEDTO {
     private String code;
     private Long semestreId;
     private String semestreNom;
+    private Integer nombreMatieres;
 }

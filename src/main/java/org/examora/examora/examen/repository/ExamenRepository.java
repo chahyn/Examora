@@ -15,7 +15,7 @@ public interface ExamenRepository extends JpaRepository<Examen , Long> {
     List<Examen> findByProfesseurIdAndStatut(Long professeurId, StatutExamen statutExam);
     List<Examen> findByStatut(StatutExamen statutExamen);
     List<Examen> findByMatiere(Long matiereId);
-    List<Examen>findByMatiereIdAndStatut(Long matiereId , List<StatutExamen> statuts);
+    List<Examen> findByMatiereIdAndStatutIn(Long matiereId, List<StatutExamen> statuts);
     Optional<Examen> findById(Long examenId);
 
 }

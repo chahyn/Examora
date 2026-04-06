@@ -1,12 +1,13 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/examflow
+    url: jdbc:postgresql://localhost:5000/examora
     username: postgres
-    password: ${DB_PASSWORD}
+    password: 1234
+    driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
     show-sql: true
     properties:
       hibernate:

@@ -27,7 +27,7 @@ public class BanqueQuestionService {
     // ---------------------------------------------------------------
     public BanqueQuestion getOuCreer(Matiere matiere, String session) {
         return banqueRepo
-                .findByMatiereAndSessionAcademique(matiere.getId(), session)
+                .findByMatiereAndSessionAcademique(matiere, session)
                 .orElseGet(() -> {
                     BanqueQuestion banque = BanqueQuestion.builder()
                             .matiere(matiere)
@@ -58,7 +58,7 @@ public class BanqueQuestionService {
     // ---------------------------------------------------------------
     public List<String> getEnoncesDejaPoses(Matiere matiere, String session) {
         return banqueRepo
-                .findByMatiereAndSessionAcademique(matiere.getId(), session)
+                .findByMatiereAndSessionAcademique(matiere, session)
                 .map(banque -> banque.getQuestions()
                         .stream()
                         .map(Question::getEnonce)

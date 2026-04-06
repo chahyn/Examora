@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface MatiereRepository extends JpaRepository<Matiere , Long> {
-    Optional<Matiere> findByUEId(Long ueId);
+    Optional<Matiere> findByUeId(Long ueId);
     List<Matiere> findByProfesseurId(Long id);
     Optional<Matiere> findByCode(String code);
     boolean existsByCode (String code);

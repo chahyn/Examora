@@ -13,6 +13,6 @@ public interface UERepository extends JpaRepository<UE , Long> {
     List<UE> findBySemestreId(Long id);
     Optional<UE> findByCode(String code);
     boolean existsByCode(String code);
-    List<UE> findBySemestreIDOrderByNomAsc(Long id);
-boolean existsBySemestreIdAndNom(Long SemestreId, String nom);
+    List<UE> findBySemestreIdOrderByNomAsc(Long id);
+    boolean existsBySemestreIdAndNom(Long SemestreId, String nom);
 }

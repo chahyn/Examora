@@ -7,8 +7,8 @@ import org.examora.examora.examen.repository.BanqueQuestionRepository;
 import org.examora.examora.examen.repository.ExamenRepository;
 import org.examora.examora.examen.repository.QuestionRepository;
 import org.springframework.stereotype.Service;
-import tools.jackson.databind.JsonNode;
-import tools.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;    // ✅ CORRECT
+import com.fasterxml.jackson.databind.ObjectMapper; // ✅ CORRECT
 
 import java.util.ArrayList;
 import java.util.List;
